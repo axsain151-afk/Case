@@ -1,0 +1,38 @@
+# base_derived_demo.py
+
+class Base:
+    def method(self):
+        print("Base method")
+
+    def shared(self):
+        print("Shared from Base")
+
+
+class Derived(Base):
+    def method(self):
+        print("Derived method")
+
+    def new_method(self):
+        print("New method in Derived")
+
+
+def demo():
+    b = Base()
+    d = Derived()
+
+    print("— Base instance —")
+    b.method()      # Base method
+    b.shared()      # Shared from Base
+
+    print("\n— Derived instance —")
+    d.method()      # Derived method (переопределён)
+    d.shared()      # Shared from Base (унаследован)
+    d.new_method()  # New method in Derived
+
+    print("\n— Polymorphism —")
+    for obj in (b, d):
+        obj.method()  # вызовет разные реализации
+
+
+if __name__ == "__main__":
+    demo()
