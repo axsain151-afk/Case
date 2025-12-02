@@ -1,0 +1,43 @@
+-- Таблица-справочник: страны
+CREATE TABLE Country (
+    country_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL UNIQUE
+);
+
+-- Таблица-справочник: типы туров
+CREATE TABLE TourType (
+    type_id INT PRIMARY KEY AUTO_INCREMENT,
+    type_name VARCHAR(50) NOT NULL UNIQUE  -- например: "Экскурсионный", "Пляжный", "Горнолыжный"
+);
+
+-- Таблица-справочник: туры (услуги)
+CREATE TABLE Tour (
+    tour_id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    country_id INT NOT NULL,
+    type_id INT NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    duration_days INT NOT NULL CHECK (duration_days > 0),
+    FOREIGN KEY (country_id) REFERENCES Country(country_id),
+    FOREIGN KEY (type_id) REFERENCES TourType(type_id)
+);
+
+-- Таблица-справочник: клиенты
+CREATE TABLE Client (
+    client_id INT PRIMARY KEY AUTO_INCREMENT,
+    full_name VARCHAR(150) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    phone VARCHAR(20)
+);
+
+-- Таблица переменной информации: заказы туров
+CREATE TABLE Booking (
+    booking_id INT PRIMARY KEY AUTO_INCREMENT,
+    client_id INT NOT NULL,
+    tour_id INT NOT NULL,
+    booking_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    start_date DATE NOT NULL,
+    status ENUM('confirmed', 'pending', 'cancelled') NOT NULL DEFAULT 'pending',
+    FOREIGN KEY (client_id) REFERENCES Client(client_id),
+    FOREIGN KEY (tour_id) REFERENCES Tour(tour_id)
+);
