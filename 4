@@ -1,0 +1,49 @@
+-- MS SQL Server
+CREATE DATABASE BookCatalog;
+GO
+
+USE BookCatalog;
+GO
+
+CREATE TABLE Authors (
+    AuthorID INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(150) NOT NULL
+);
+
+CREATE TABLE Books (
+    BookID INT IDENTITY(1,1) PRIMARY KEY,
+    Title NVARCHAR(255) NOT NULL,
+    AuthorID INT NOT NULL,
+    ISBN NVARCHAR(20),
+    PublishedYear INT CHECK (PublishedYear BETWEEN 1000 AND 9999),
+    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID)
+);
+GO
+
+-- Delphi 10.2 — WebBroker + ISAPI метод для dll
+procedure TWebModule1.WebModule1DefaultHandlerAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
+var
+  Books: TFDQuery;
+  HTML: string;
+begin
+  Books := TFDQuery.Create(nil);
+  try
+    Books.Connection := FDConnection1;
+    Books.SQL.Text := 'SELECT b.Title, a.Name FROM Books b JOIN Authors a ON b.AuthorID = a.AuthorID';
+    Books.Open;
+
+    HTML := '<html><head><title>Каталог книг</title></head><body><h1>Книги</h1><ul>';
+    while not Books.Eof do
+    begin
+      HTML := HTML + '<li>' + Books.FieldByName('Title').AsString +
+              ' — ' + Books.FieldByName('Name').AsString + '</li>';
+      Books.Next;
+    end;
+    HTML := HTML + '</ul></body></html>';
+
+    Response.Content := HTML;
+  finally
+    Books.Free;
+  end;
+end;
