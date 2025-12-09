@@ -2,23 +2,22 @@ def sum_negatives_between_extremes(arr):
     if not arr:
         return 0
 
+    # Находим значения экстремумов
     min_val = min(arr)
     max_val = max(arr)
 
-    # Находим ВСЕ позиции минимума и максимума
-    min_indices = [i for i, x in enumerate(arr) if x == min_val]
-    max_indices = [i for i, x in enumerate(arr) if x == max_val]
+    # Находим ПЕРВЫЕ индексы их вхождения
+    min_idx = arr.index(min_val)
+    max_idx = arr.index(max_val)
 
-    left = min(min(min_indices), min(max_indices))
-    right = max(max(min_indices), max(max_indices))
+    # Определяем границы отрезка между ними
+    left = min(min_idx, max_idx)
+    right = max(min_idx, max_idx)
 
+    # Если экстремумы соседние или совпадают — ничего "между" нет
     if right - left <= 1:
         return 0
 
-    return sum(x for x in arr[left + 1:right] if x < 0)
-
-
-# Пример
-if __name__ == "__main__":
-    A = [3, -1, -5, 10, -2, 0, -3, 1]
-    print(sum_negatives_between_extremes(A))  # Например: между min=-5 и max=10 → сумма = -1
+    # Суммируем ТОЛЬКО отрицательные элементы ВНУТРИ отрезка
+    total = sum(x for x in arr[left + 1:right] if x < 0)
+    return total
